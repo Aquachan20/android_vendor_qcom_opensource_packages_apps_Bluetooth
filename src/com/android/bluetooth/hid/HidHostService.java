@@ -156,10 +156,7 @@ public class HidHostService extends ProfileService {
                 break;
                 case MESSAGE_DISCONNECT: {
                     BluetoothDevice device = (BluetoothDevice) msg.obj;
-                    int priority = getPriority(device);
-                    boolean reconnectAllowed =
-                            priority == BluetoothProfile.PRIORITY_ON;
-                    if (!disconnectHidNative(Utils.getByteAddress(device), reconnectAllowed)) {
+                    if (!disconnectHidNative(Utils.getByteAddress(device))) {
                         broadcastConnectionState(device, BluetoothProfile.STATE_DISCONNECTING);
                         broadcastConnectionState(device, BluetoothProfile.STATE_DISCONNECTED);
                         break;
@@ -184,10 +181,7 @@ public class HidHostService extends ProfileService {
                             Log.d(TAG, "Incoming HID connection rejected");
                         }
                         if (disconnectRemote(device)) {
-                            int connectionPolicy = getConnectionPolicy(device);
-                            boolean reconnectAllowed =
-                                    connectionPolicy == BluetoothProfile.CONNECTION_POLICY_ALLOWED;
-                            disconnectHidNative(Utils.getByteAddress(device), reconnectAllowed);
+                            disconnectHidNative(Utils.getByteAddress(device));
                         } else {
                             virtualUnPlugNative(Utils.getByteAddress(device));
                         }
@@ -912,7 +906,7 @@ public class HidHostService extends ProfileService {
 
     private native boolean connectHidNative(byte[] btAddress);
 
-    private native boolean disconnectHidNative(byte[] btAddress, boolean reconnectAllowed);
+    private native boolean disconnectHidNative(byte[] btAddress);
 
     private native boolean getProtocolModeNative(byte[] btAddress);
 
